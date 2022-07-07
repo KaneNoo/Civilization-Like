@@ -1,0 +1,62 @@
+﻿@page "/Eras"
+@layout AdminMenuLayout
+@inject IEraService EraService
+
+<ActionMenu ModelName="Era" />
+
+
+<div>
+    @if (EraService.Eras == null || EraService.Eras.Count <= 0)
+    {
+    <p>@EraService.Message</p>
+    }
+    else
+    {
+    <table>
+
+        <tr>
+            <th>Эра</th>
+            <th>Уровень</th>
+            <th>Очки культуры для апгрейда</th>
+            <th>Территории в Эре</th>
+            <th></th>
+        </tr>
+        @for (int i = 0; i < EraService.Eras.Count(); i++)
+        {
+        var era = EraService.Eras[i];
+        <tr>
+            <td>@era.Name</td>
+            <td>@era.Level</td>
+            <td>@era.CulturePointsRequared</td>
+            <td>@era.Districts.Count()</td>
+            
+            <td><button class="btn btn-check" @onclick="() => Update(era)"></button></td>
+        </tr>
+        }
+
+    </table>
+    }
+</div>
+
+@code {
+
+    private string Message { get; set; } = "Загрузка...";
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        await EraService.GetAll();
+    }
+
+    private async void Remove(int eraID)
+    {
+        await EraService.Remove(eraID);
+    }
+
+    private async void Update(Era era)
+    {
+        await EraService.Update(era);
+    }
+
+
+}

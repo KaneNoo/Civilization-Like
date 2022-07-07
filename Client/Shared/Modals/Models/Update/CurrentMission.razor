@@ -1,0 +1,61 @@
+﻿@inject IMissionService MissionService
+
+<div class="modal-body">
+    <EditForm Model="NewMission">
+        <table>
+            <tr>
+                <th></th>
+                <th>Текущий</th>
+                <th>Новый</th>
+            </tr>
+
+            <tr>
+                <th>Заголовок</th>
+                <td>@OldMission.Title</td>
+                <td><InputText @bind-Value="@NewMission.Title"></InputText></td>
+            </tr>
+            <tr>
+                <th>Описание</th>
+                <th>@OldMission.RealDescription</th>
+                <td><InputText @bind-Value="@NewMission.RealDescription"></InputText></td>
+            </tr>
+            <tr>
+                <th>МетаОписание</th>
+                <th>@OldMission.MetaDescription</th>
+                <td><InputText @bind-Value="@NewMission.MetaDescription"></InputText></td>
+            </tr>
+            <tr>
+                <th>Награда</th>
+                <th>@OldMission.CulturePointsReward</th>
+                <td><InputNumber min="0" @bind-Value="@NewMission.CulturePointsReward"></InputNumber></td>
+            </tr>
+        </table>
+    </EditForm>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" @onclick="() => Update()">Подтвердить</button>
+</div>
+
+@code {      
+    [Parameter]
+    public int MissionID { get; set; }
+
+    private Mission OldMission { get; set; } = new();
+    private Mission NewMission { get; set; } = new();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        OldMission = (await MissionService.Get(MissionID)).Data;
+    }
+
+    private async void Update()
+    {
+        NewMission.Title = NewMission.Title.Trim();
+        NewMission.RealDescription = NewMission.RealDescription.Trim();
+        NewMission.MetaDescription= NewMission.MetaDescription.Trim();
+
+        var response = await MissionService.Update(NewMission);
+    }
+
+
+}

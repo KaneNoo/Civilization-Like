@@ -1,0 +1,63 @@
+﻿@inject IPrizeService PrizeService
+@inject IWheelService WheelService
+
+<div class="modal-body">
+    <EditForm Model="Prize">
+        <table>
+            <tr>
+                <th></th>
+                <th>Текущий</th>
+                <td>Новый</td>
+            </tr>
+
+            <tr>
+                <th>Приз</th>
+                <td>
+                    <InputSelect @bind-Value="@Prize" @onchange="UpdateSelection">
+                        @if (PrizeService.Prizes != null && PrizeService.Prizes.Count > 0)
+                        {
+                            @foreach (var prize in AvailablePrizes)
+                            {
+                                <option value="@prize.ID">@prize.Name</option>
+                            }
+                        }
+                        else
+                        {
+                            <option>Список Форматов Пуст</option>
+                        }
+                    </InputSelect>
+                </td>
+            </tr>
+        </table>
+    </EditForm>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" @onclick="() => Add()">Подтвердить</button>
+</div>
+
+@code {
+
+
+    private List<Prize> AvailablePrizes { get; set; } = new();
+    private List<Prize> SelectedPrizes { get; set; } = new();
+    private Prize Prize { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await PrizeService.GetAll();
+        AvailablePrizes = PrizeService.Prizes;
+    }
+
+    private void UpdateSelection(ChangeEventArgs e)
+    {
+        SelectedPrizes.Add(AvailablePrizes.FirstOrDefault(p => p.ID == int.Parse(e.Value.ToString())));
+        AvailablePrizes.Remove(AvailablePrizes.FirstOrDefault(p => p.ID == int.Parse(e.Value.ToString())));
+            }
+
+    private async void Add()
+    {
+        var response = await WheelService.Add(SelectedPrizes.Select(p => p.ID).ToList());
+    }
+
+
+}

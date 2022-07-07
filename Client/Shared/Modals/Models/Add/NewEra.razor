@@ -1,0 +1,38 @@
+﻿@inject IEraService EraService
+
+<div class="modal-body">
+    <EditForm Model="Era">
+        <table>
+            <tr>
+                <th>Имя</th>
+                <td><InputText @bind-Value="@Era.Name"></InputText></td>
+            </tr>
+            <tr>
+                <th>Уровень</th>
+                <td><InputNumber min="1" @bind-Value="@Era.Level"></InputNumber></td>
+            </tr>
+            <tr>
+                <th>Очки до апгрейда</th>
+                <td><InputNumber min="1" @bind-Value="@Era.CulturePointsRequared"></InputNumber></td>
+            </tr>
+        </table>
+    </EditForm>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" @onclick="() => Add()">Подтвердить</button>
+</div>
+
+@code {        
+
+    private string Message { get; set; } = "Загрузка форматов...";
+
+    private Era Era= new Era { Level = 1};
+
+    private async void Add()
+    {
+        Era.Name = Era.Name.Trim();
+        var response = await EraService.Add(Era);
+    }
+
+
+}

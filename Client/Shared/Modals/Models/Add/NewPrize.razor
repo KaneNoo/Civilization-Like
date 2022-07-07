@@ -1,0 +1,43 @@
+﻿@inject IPrizeService PrizeService
+
+<div class="modal-body">
+    <EditForm Model="Prize">
+        <table>
+            <tr>
+                <th>Введите Имя</th>
+                <td><InputText @bind-Value="@Prize.Name"></InputText></td>
+            </tr>
+            <tr>
+                <th>Введите Шанс Выпадения</th>
+                <td><InputNumber @bind-Value="@Prize.Chance"></InputNumber></td>
+            </tr>
+            <tr>
+                <th>Введите цвет в формате #</th>
+                <td><InputText @bind-Value="@Prize.Color"></InputText></td>
+            </tr>
+            <tr>
+            <th rowspan="2"><a href="http://csscolor.ru/" target="_blank"> Ссылка на конфигуратор цветов</a></th>
+           </tr>
+        </table>
+    </EditForm>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" @onclick="() => Add()">Подтвердить</button>
+</div>
+
+@code {
+
+    private string Message { get; set; } = "Загрузка форматов...";
+
+    private Prize Prize { get; set; } = new();
+
+    private async void Add()
+    {
+        Prize.Name = Prize.Name.Trim();
+        Prize.Color = Prize.Color.Trim();
+
+        var response = await PrizeService.Add(Prize);
+    }
+
+
+}

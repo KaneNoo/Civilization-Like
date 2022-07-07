@@ -1,0 +1,54 @@
+﻿@page "/MainMenu"
+@inject IAuthService AuthService
+@inject IHttpContextAccessor ContextAccessor
+
+<div align="center" class="MainMenu">
+    <img src="/Images/MainMenu/MainMenuWood.jpg" alt="MainMenuDesk" />
+    <div>
+        <h3>Главное меню</h3>
+
+        <a class="btn btn-success" href="@Address">@Message</a>
+
+        <a class="btn btn-success" href="Rating">Рейтинг</a>
+
+        <a class="btn btn-success" href="Store">Магазин</a>
+
+        <a class="btn btn-success" href="FortuneWheel">Колесо Фортуны</a>
+    </div>
+</div>
+
+@code {
+
+    //TODO: Сделать "Регистрацию с выбором Территории" (автозакреп)
+
+    private bool IsAdmin = false;
+
+    private string Message = "Зарегистрироваться";
+    private string Address = "Registration";
+
+    protected async override Task OnInitializedAsync()
+    {
+        var response = await AuthService.Authorize();
+
+        if (response != null && response.Success)
+        {
+            var player = response.Data;
+
+            if (player.IsAdmin)
+            {
+                IsAdmin = true;
+                Message = "Администрирование";
+                Address = "Admin";
+            }
+            else if (player.District != null)
+            {
+
+                Message = "Продолжить";
+                Address = "Player";
+            }
+        }
+
+
+
+    }
+}

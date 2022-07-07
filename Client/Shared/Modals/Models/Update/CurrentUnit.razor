@@ -1,0 +1,48 @@
+﻿@inject IUnitService UnitService
+
+<div class="modal-body">
+    <EditForm Model="NewUnit">
+        <table>
+            <tr>
+                <th></th>
+                <th>Текущий</th>
+                <td>Новый</td>
+            </tr>
+
+            <tr>
+                <th>Имя</th>
+                <th>@OldUnit.Name</th>
+                <td><InputText @bind-Value="@NewUnit.Name"></InputText></td>
+            </tr>
+        </table>
+    </EditForm>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" @onclick="() => Update()">Подтвердить</button>
+</div>
+
+@code {
+
+
+    [Parameter]
+    public int UnitID { get; set; }
+
+    private Unit OldUnit { get; set; } = new();
+    private Unit NewUnit { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        OldUnit = (await UnitService.Get(UnitID)).Data;
+    }
+
+    private async void Update()
+    {
+        NewUnit.Name = NewUnit.Name.Trim();
+
+        var response = await UnitService.Update(NewUnit);
+    }
+
+
+}
+
+

@@ -1,0 +1,34 @@
+﻿@inject IUnitService UnitService
+
+<div class="modal-body">
+    <EditForm Model="Unit">
+        <table>
+            <tr>
+                <th>Введите Имя</th>
+                <td><InputText @bind-Value="@Unit.Name"></InputText></td>
+            </tr>
+        </table>
+    </EditForm>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" @onclick="() => Add()">Подтвердить</button>
+</div>
+
+@code {
+    [CascadingParameter] 
+    BlazoredModalInstance ModalInstance { get; set; }
+
+    private string Message { get; set; } = "Загрузка форматов...";
+
+    private Unit Unit { get; set; } = new();
+
+    private async void Add()
+    {
+        Unit.Name = Unit.Name.Trim();
+        var response = await UnitService.Add(Unit);
+    }
+
+
+}
+
+

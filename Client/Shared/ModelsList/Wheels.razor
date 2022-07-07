@@ -1,0 +1,49 @@
+﻿@page "/Wheels"
+@layout AdminMenuLayout
+@inject IWheelService WheelService
+
+<ActionMenu ModelName="Wheel" />
+
+<div>
+    @if (WheelService.Wheels == null || WheelService.Wheels.Count <= 0)
+    {
+        <p>@WheelService.Message</p>
+    }
+    else
+    {
+        <table>
+
+            <tr>
+                <th>Номер колеса</th>
+                <th>Приз</th>
+            </tr>
+            @foreach(int id in WheelsID) { 
+                <tr>
+                    <td rowspan="@WheelService.Wheels.Count(w => w.ID == id)">@id</td>
+
+                    @foreach(var wheel in WheelService.Wheels.Where(w => w.ID == id))
+                    {
+                        <td>@wheel.Prize.Name</td>
+                    }
+                </tr>
+            }
+
+        </table>
+    }
+</div>
+
+@code {
+
+    private string Message { get; set; } = "Загрузка форматов...";
+
+    private List<int> WheelsID { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await WheelService.GetAll();
+        WheelsID = WheelService.Wheels
+            .Select(w => w.ID)
+            .Distinct()
+            .ToList();
+    }
+}

@@ -1,0 +1,55 @@
+﻿@inject IDistrictService DistrictService
+@inject IUnitService UnitService
+
+<div class="modal-body">
+    <EditForm Model="District">
+        <table>
+            <tr>
+                <th>Имя</th>
+                <td><InputText @bind-Value="@District.Name"></InputText></td>
+            </tr>
+            <tr>
+                <th>Формат</th>
+                <td>
+                    <InputSelect @bind-Value="District.UnitID">
+                        @if (UnitService.Units != null && UnitService.Units.Count > 0)
+                        {
+                            @foreach (var unit in UnitService.Units)
+                            {
+                                <option value="@unit.ID">@unit.Name</option>
+                            }
+                        }
+                        else
+                        {
+                            <option>Список Форматов Пуст</option>
+                        }
+                    </InputSelect>
+                </td>
+            </tr>
+        </table>
+    </EditForm>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" @onclick="() => Add()">Подтвердить</button>
+</div>
+
+@code {
+
+    private string Message { get; set; } = "Загрузка форматов...";
+
+    private District District = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await UnitService.GetAll();
+    }
+
+    private async void Add()
+    {
+        District.Name = District.Name.Trim();
+
+        await DistrictService.Add(District);
+    }
+
+
+}

@@ -1,0 +1,54 @@
+﻿@inject IEraService EraService
+
+<div class="modal-body">
+    <EditForm Model="NewEra">
+        <table>
+            <tr>
+                <th></th>
+                <th>Текущий</th>
+                <th>Новый</th>
+            </tr>
+
+            <tr>
+                <td>Имя</td>
+                <td>@OldEra.Name</td>
+                <td><InputText @bind-Value="@NewEra.Name"></InputText></td>
+            </tr>
+            <tr>
+                <td>Уровень</td>
+                <td>@OldEra.Level</td>
+                <td><InputNumber @bind-Value="@NewEra.Level"></InputNumber></td>
+            </tr>
+            <tr>
+                <td>Очки культуры для апгрейда</td>
+                <td>@OldEra.CulturePointsRequared</td>
+                <td><InputNumber @bind-Value="@NewEra.CulturePointsRequared"></InputNumber></td>
+            </tr>
+        </table>
+    </EditForm>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" @onclick="() => Update()">Подтвердить</button>
+</div>
+
+@code {
+
+    [Parameter]
+    public int EraID { get; set; }
+
+    private Era NewEra = new Era();
+    private Era OldEra = new Era();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        OldEra = (await EraService.Get(EraID)).Data;
+    }
+
+    private async void Update()
+    {
+        NewEra.Name = NewEra.Name.Trim();
+        var response = await EraService.Update(NewEra);
+    }
+
+
+}

@@ -1,0 +1,59 @@
+﻿@inject IPrizeService PrizeService
+
+<div class="modal-body">
+    <EditForm Model="NewPrize">
+        <table>
+            <tr>
+                <th></th>
+                <th>Текущий</th>
+                <th>Новый</th>
+            </tr>
+
+            <tr>
+                <th>Имя</th>
+                <th>@OldPrize.Name</th>
+                <td><InputText @bind-Value="@NewPrize.Name"></InputText></td>
+            </tr>
+            <tr>
+                <th>Шанс Выпадения</th>
+                <th>@OldPrize.Name</th>
+                <td><InputNumber @bind-Value="@NewPrize.Chance"></InputNumber></td>
+            </tr>
+            <tr>
+                <th>Цвет в формате #</th>
+                <th>@OldPrize.Color</th>
+                <td><InputText @bind-Value="@NewPrize.Color"></InputText></td>
+            </tr>
+            <tr>
+                <th rowspan="3"><a href="csscolor.ru"> Ссылка на конфигуратор цветов</a></th>
+            </tr>
+        </table>
+    </EditForm>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" @onclick="() => Update()">Подтвердить</button>
+</div>
+
+@code {
+
+    [Parameter]
+    public int PrizeID { get; set; }
+
+    private Prize OldPrize { get; set; } = new();
+    private Prize NewPrize { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        OldPrize = (await PrizeService.Get(PrizeID)).Data;
+    }
+
+    private async void Update()
+    {
+        NewPrize.Name = NewPrize.Name.Trim();
+        NewPrize.Color = NewPrize.Color.Trim();
+
+        var response = await PrizeService.Update(NewPrize);
+    }
+
+
+}

@@ -1,0 +1,65 @@
+﻿@inject IDistrictService DistrictService
+@inject IUnitService UnitService
+
+<div class="modal-body">
+    <EditForm Model="NewDistrict">
+        <table>
+            <tr>
+                <th></th>
+                <th>Текущий</th>
+                <th>Новый</th>
+            </tr>
+            <tr>
+                <td>Имя</td>
+                <td>@OldDistrict.Name</td>
+                <td><InputText @bind-Value="@NewDistrict.Name"></InputText></td>
+            </tr>
+            <tr>
+                <td>Формат</td>
+                <td>@OldDistrict.Unit.Name</td>
+                <td>
+                    <InputSelect @bind-Value="NewDistrict.UnitID">
+                        @if (UnitService.Units != null && UnitService.Units.Count > 0)
+                        {
+                            @foreach (var unit in UnitService.Units)
+                            {
+                                <option value="@unit.ID">@unit.Name</option>
+                            }
+                        }
+                        else
+                        {
+                            <option>Список Форматов Пуст</option>
+                        }
+                    </InputSelect>
+                </td>
+            </tr>
+        </table>
+    </EditForm>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" @onclick="() => Update()">Подтвердить</button>
+</div>
+
+@code {
+    [Parameter]
+    public int districtID { get; set; }
+
+    private District OldDistrict = new();
+    private District NewDistrict = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        OldDistrict = (await DistrictService.Get(districtID)).Data;
+
+        await UnitService.GetAll();
+    }
+
+    private async void Update()
+    {
+        NewDistrict.Name = NewDistrict.Name.Trim();
+
+        await DistrictService.Update(NewDistrict);
+    }
+
+
+}

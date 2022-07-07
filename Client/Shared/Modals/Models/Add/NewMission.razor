@@ -1,0 +1,46 @@
+﻿@inject IMissionService MissionService
+
+<div class="modal-body">
+    <EditForm Model="Mission">
+        <table>
+            <tr>
+                <th>Заголовок</th>
+                <td><InputText @bind-Value="@Mission.Title"></InputText></td>
+            </tr>
+            <tr>
+                <th>Описание</th>
+                <td><InputText @bind-Value="@Mission.RealDescription"></InputText></td>
+            </tr>
+            <tr>
+                <th>МетаОписание</th>
+                <td><InputText @bind-Value="@Mission.MetaDescription"></InputText></td>
+            </tr>
+            <tr>
+                <th>Награда</th>
+                <td><InputNumber min="0" @bind-Value="@Mission.CulturePointsReward"></InputNumber></td>
+            </tr>
+        </table>
+    </EditForm>
+    }
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" @onclick="() => Add()">Подтвердить</button>
+</div>
+
+@code {
+
+    private string Message { get; set; } = "Загрузка форматов...";
+
+    private Mission Mission { get; set; } = new();
+
+    private async void Add()
+    {
+        Mission.Title = Mission.Title.Trim();
+        Mission.RealDescription = Mission.RealDescription.Trim();
+        Mission.MetaDescription = Mission.MetaDescription.Trim();
+
+        var response = await MissionService.Add(Mission);
+    }
+
+
+}

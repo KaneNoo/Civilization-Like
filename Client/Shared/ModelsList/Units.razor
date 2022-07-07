@@ -1,0 +1,47 @@
+﻿@page "/Units"
+@layout AdminMenuLayout
+@inject IUnitService UnitService
+
+<ActionMenu ModelName="Unit" />
+
+<h3>Units</h3>
+
+
+<div>
+    @if (UnitService.Units == null || UnitService.Units.Count <= 0)
+    {
+        <p>@UnitService.Message</p>
+    }
+    else
+    {
+        <table>
+
+            <tr>
+                <th>Формат</th>
+                <th>Количество территорий</th>
+            </tr>
+            @for (int i = 0; i < UnitService.Units.Count(); i++)
+            {
+                var unit = UnitService.Units[i];
+                <tr>
+                    <td>@unit.Name</td>
+                    <td>@unit.Districts.Count</td>
+                </tr>
+            }
+
+        </table>
+    }
+</div>
+
+@code {
+
+    private string Message { get; set; } = "Загрузка форматов...";
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        await UnitService.GetAll();
+    }
+}
+
+

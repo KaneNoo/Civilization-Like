@@ -1,0 +1,75 @@
+﻿@page "/Districts"
+@layout AdminMenuLayout
+@inject IDistrictService DistrictService
+@inject IModalService modal
+
+<ActionMenu ModelName="District"/>
+
+<div>
+    @if (DistrictService.Districts == null || DistrictService.Districts.Count <= 0)
+    {
+        <p>@DistrictService.Message</p>
+    }
+    else
+    {
+        <table>
+
+            <tr>
+                <th>Пользователь</th>
+                <th>Имя</th>
+                <th>Текущая эра</th>
+                <th>Очки культуры</th>
+                <th></th>
+                @*<th></th>*@
+            </tr>
+            @for (int i = 0; i < DistrictService.Districts.Count(); i++)
+            {
+                var district = DistrictService.Districts[i];
+                <tr>
+                    <td>@district.Player.Name</td>
+                    <td>@district.Name</td>
+                    <td>@district.Era.Name</td>
+                    <td>@district.CulturePoints</td>
+
+                    <td><button class="btn btn-warning" @onclick="() => Update(district.ID)">Обновить</button></td>
+                    <td><button class="btn btn-danger" @onclick="() => Remove(district.ID)">Удалить</button></td>
+
+                </tr>
+            }
+
+        </table>
+    }
+</div>
+
+@code {
+
+    [CascadingParameter]
+    BlazoredModalInstance ModalInstance { get; set; }
+
+    private string Message { get; set; } = "Загрузка форматов...";
+
+    private ModalOptions options = new()
+    {
+        DisableBackgroundCancel = true
+    };
+
+    private ModalParameters parameters = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await DistrictService.GetAll();
+    }
+
+    private async void Remove(int districtID)
+    {
+        parameters.Add("id", districtID);
+        modal.Show<RemoveObject>("Удаление территории", parameters, options);
+    }
+
+    private async void Update(int districtID)
+    {
+        modal.Show<NewDistrict>("Изменение территории", options);
+    }
+
+
+}

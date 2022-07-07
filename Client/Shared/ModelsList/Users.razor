@@ -1,0 +1,45 @@
+﻿@page "/Players"
+@inject IPlayerService PlayerService 
+@layout AdminMenuLayout
+
+<div>
+    @if (PlayerService.Players == null || PlayerService.Players.Count <= 0)
+    {
+        <p>@PlayerService.Message</p>
+    }
+    else
+    {
+        <table>
+
+            <tr>
+                <th>Логин</th>
+                <th>Администратор</th>
+                <th>Территория</th>
+                <th>Монеты Колеса Фортуны</th>
+            </tr>
+            @for (int i = 0; i < PlayerService.Players.Count(); i++)
+            {
+                var player = PlayerService.Players[i];
+                <tr>
+                    <td>@player.Name</td>
+                    <td>@(player.IsAdmin ? "Да" : "Нет")</td>
+                    <td>@(player.District != null ? player.District.Name : "")</td>
+                    <td>@player.WheelCoins</td>
+
+                </tr>
+            }
+
+        </table>
+    }
+</div>
+
+@code {
+
+    private string Message { get; set; } = "Загрузка форматов...";
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        await PlayerService.GetAll();
+    }
+}

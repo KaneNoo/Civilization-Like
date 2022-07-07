@@ -1,0 +1,52 @@
+﻿@inject IModalService modal
+<div>
+    <button class="btn btn-success" @onclick="() => ShowAddingModal()">Добавить</button>
+</div>
+
+
+
+@code {
+    [Parameter]
+    public string ModelName { get; set; }
+
+    [CascadingParameter]
+    BlazoredModalInstance ModalInstance { get; set; }
+
+    private string Message { get; set; } = "Жми на кнопку";
+
+
+    private void ShowAddingModal()
+    {
+        var options = new ModalOptions()
+        {
+            DisableBackgroundCancel = true
+        };
+        @switch (ModelName)
+        {
+            case "District":
+                modal.Show<NewDistrict>("Новая территория", options);
+                break;
+
+            case "Unit":
+                modal.Show<NewUnit>("Новый Формат", options);
+                break;
+
+            case "Era":
+                modal.Show<NewEra>("Новая Эра", options);
+                break;
+
+            case "Mission":
+                modal.Show<NewMission>("Новое Задание", options);
+                break;
+
+            case "Prize":
+                modal.Show<NewPrize>("Новый Приз", options);
+                break;
+
+            case "Wheel":
+                modal.Show<NewWheel>("Новое Колесо Фортуны", options);
+                break;
+        }
+        
+    }
+}

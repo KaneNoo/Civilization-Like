@@ -1,0 +1,77 @@
+﻿
+<div class="modal-body">
+    <h5>@Message</h5>
+</div>
+<div class="modal-footer">
+    <button @onclick="() => Remove()" class="btn btn-danger">Подтвердить</button>
+</div>
+
+@code {
+
+    [CascadingParameter]
+    public ModalParameters parameters { get; }
+
+    private string Message { get; set; } = "Подтвердите удаление";
+
+
+    private async Task Remove()
+    {
+        string modelName = parameters.Get<string>("modelName");
+        int id = parameters.Get<int>("id");
+        var response = new ServiceResponse<bool>();
+
+        @switch (modelName)
+        {
+            case "District":
+                Message += " Территории";
+                @inject IDistrictService DistrictService;
+                response = await DistrictService.Remove(id);
+                break;
+
+            case "Unit":
+                Message += " Формата";
+                @inject IUnitService UnitService;
+                response = await UnitService.Remove(id);
+                break;
+
+            case "Era":
+                Message += " Эры";
+                @inject IEraService EraService;
+                response = await EraService.Remove(id);
+                break;
+
+            case "Mission":
+                Message += " Задания";
+                @inject IMissionService MissionService;
+                response = await MissionService.Remove(id);
+                break;
+
+            case "Prize":
+                Message += " Приза";
+                @inject IPrizeService PrizeService;
+                response = await PrizeService.Remove(id);
+                break;
+
+            case "Wheel":
+                Message += " Колеса";
+                @inject IWheelService WheelService;
+                response = await WheelService.Remove(id);
+                break;
+
+            case "Player":
+                Message += " Пользователя";
+                @inject IPlayerService PlayerService;
+                response = await PlayerService.Remove(id);
+                break;
+        }
+
+        if (response != null && response.Success)
+        {
+            Message = "Удалено";
+        }
+        else
+        {
+            Message = response.Message;
+        }
+    }
+}
